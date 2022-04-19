@@ -2,7 +2,8 @@
 
 ArmAccelLimit = 100 # slows down arm.
 
-def __init__(self, maestro,chDigger, chArm):
+class DiggerArm:
+	def __init__(self, maestro,chDigger, chArm):
 		self.maestro = maestro
 		self.chDigger = chDigger
 		self.chArm = chArm
@@ -21,20 +22,26 @@ def __init__(self, maestro,chDigger, chArm):
 		self.maxMotorDig = 9000
 
 
-# Scale motor speeds (-1 to 1) to maestro servo target values
-def maestroScale(self, motorArm, motorDig):
-    if (motorArm >= 0) :
-        r = int(self.centerMotorArm + (self.maxMotorArm - self.centerMotorArm) * motorArm)
-    else:
-        r = int(self.centerMotorArm + (self.centerMotorArm - self.minMotorArm) * motorArm)
-    if (motorDig >= 0) :
-        l = int(self.centerMotorDig + (self.maxMotorDig - self.centerMotorDig) * motorDig)
-    else:
-        l = int(self.centerMotorDig + (self.centerMotorDig - self.minMotorDig) * motorDig)
-    return (r, l)
+	# Scale motor speeds (-1 to 1) to maestro servo target values
+	def maestroScale(self, motorArm, motorDig):
+		if (motorArm >= 0) :
+			r = int(self.centerMotorArm + (self.maxMotorArm - self.centerMotorArm) * motorArm)
+		else:
+			r = int(self.centerMotorArm + (self.centerMotorArm - self.minMotorArm) * motorArm)
+		if (motorDig >= 0) :
+			l = int(self.centerMotorDig + (self.maxMotorDig - self.centerMotorDig) * motorDig)
+		else:
+			l = int(self.centerMotorDig + (self.centerMotorDig - self.minMotorDig) * motorDig)
+		return (r, l)
 
 
-def setMotorPower(self, motorArm, motorDig):
-    (servoArm, servoDig) = self.maestroScale(motorArm, motorDig)
-    self.maestro.setTarget(self.chArm, servoArm)
-    self.maestro.setTarget(self.chDigger, servoDig)
+	def setMotorPower(self, motorArm, motorDig):
+		(servoArm, servoDig) = self.maestroScale(motorArm, motorDig)
+		self.maestro.setTarget(self.chArm, servoArm)
+		self.maestro.setTarget(self.chDigger, servoDig)
+
+	def stop(self):
+		self.setMotorPower(0, 0)
+
+	def close(self):
+		self.stop()
